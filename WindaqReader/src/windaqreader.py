@@ -7,6 +7,8 @@ __date__ ="$May 20, 2009 11:13:44 AM$"
 from optparse import OptionParser
 from header import header
 import struct
+import csv
+
 class Windaqreader(object):
     winvalue_struct = struct.Struct("<h")
     slope_struct = struct.Struct("<d")
@@ -42,7 +44,10 @@ class Windaqreader(object):
                     break
                 val1 = Windaqreader.winvalue_struct.unpack(data)[0] >> 2
                 true = val1*self.slope + self.intercept
-                self.values.append(true)
+                composite = []
+                composite.append(true)
+                composite.append(true * -1)
+                self.values.append(composite)
            
         except Exception , e:
             #print "Caught Exception while printing list:%d values read : Error %s" % (i,e.message)
@@ -50,11 +55,11 @@ class Windaqreader(object):
 
         import os
         self.outfile = open(os.path.splitext(self.file.name)[0] + "_outfile.csv" , "w")
-
+        csvwriter = csv.writer(self.outfile,dialect=csv)
         for val in self.values:
-            self.outfile.write("%f" % val)
-            self.outfile.write("\n")
-            self.outfile.flush()
+         csvwriter.writerow(val)
+        self.outfile.write("\n")
+        self.outfile.flush()
         self.outfile.close()
 
 
