@@ -45,8 +45,8 @@ class Windaqreader(object):
                 val1 = Windaqreader.winvalue_struct.unpack(data)[0] >> 2
                 true = val1*self.slope + self.intercept
                 composite = []
-                composite.append(true)
                 composite.append(true * -1)
+                composite.append(true)
                 self.values.append(composite)
            
         except Exception , e:
